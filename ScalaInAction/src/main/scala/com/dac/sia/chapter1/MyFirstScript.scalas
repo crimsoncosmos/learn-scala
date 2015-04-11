@@ -1,0 +1,7 @@
+/**
+ *
+ *
+ * @author <a href="mailto:dan.andrei.carp@gmail.com">Dan Andrei Carp</a>
+ */
+
+args.foreach(println)

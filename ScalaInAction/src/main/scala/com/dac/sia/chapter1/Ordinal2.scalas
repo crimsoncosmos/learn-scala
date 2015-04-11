@@ -1,0 +1,18 @@
+/**
+ *
+ *
+ * @author <a href="mailto:dan.andrei.carp@gmail.com">Dan Andrei Carp</a>
+ */
+
+val suffixes = List(
+  "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"
+)
+
+val args = System.getProperty("arg0") :: Nil
+
+println(ordinal(args(0).toInt))
+
+def ordinal(number: Int) = number match {
+  case tenToTwenty if 10 to 20 contains tenToTwenty => number + "th"
+  case rest => rest + suffixes(number % 10)
+}

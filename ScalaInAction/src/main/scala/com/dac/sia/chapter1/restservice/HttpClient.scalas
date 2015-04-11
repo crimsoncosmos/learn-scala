@@ -1,0 +1,105 @@
+import org.apache.http.client.entity.UrlEncodedFormEntity
+import org.apache.http.client.methods.{HttpOptions, HttpDelete, HttpGet, HttpPost}
+import org.apache.http.impl.client.{BasicResponseHandler, DefaultHttpClient}
+import org.apache.http.message.{BasicHeader, BasicNameValuePair}
+
+/**
+ * To be called with something like:
+ * {@code mvn scala:script -DscriptFile=src/main/scala/com/dac/sia/chapter1/restservice/HttpClient.scalas -Darg0=options -Darg1="-d" -Darg2="k1=v1,k2=v2" -Darg3=http://localhost:8080/sia}
+ *
+ * @author <a href="mailto:dan.andrei.carp@gmail.com">Dan Andrei Carp</a>
+ */
+
+val args = Array(System.getProperty("arg0"), System.getProperty("arg1"), System.getProperty("arg2"), System.getProperty("arg3"))
+
+require(args.length >= 2, "at minimum you should specify action (post, get, delete, options) and url")
+val nonNullArgs = args.filter(_ != null)
+val command = nonNullArgs.head
+val params = parseArgs(nonNullArgs)
+val url = nonNullArgs.last
+
+println("=== input ===")
+println("args: " + args.mkString(","))
+println("non null args: " + nonNullArgs.mkString(","))
+println("command: " + command)
+println("params: " + params)
+println("url: " + url)
+println("=== end of input ===")
+
+command match {
+  case "post" => handlePostRequest()
+  case "get" => handleGetRequest()
+  case "delete" => handleDeleteRequest()
+  case "options" => handleOptionsRequest()
+}
+
+def parseArgs(args: Array[String]): Map[String, List[String]] = {
+
+  def nameValuePair(paramName: String) = {
+    def values(commaSeparatedValues: String) = commaSeparatedValues.split(",").toList
+    val index = args.indexOf(paramName)
+    println("index of: " + paramName + " = " + index + " in " + args.mkString(","))
+    (paramName, if (index == -1) Nil else values(args(index + 1)))
+  }
+
+  Map(nameValuePair("-d"), nameValuePair("-h"))
+}
+
+def splitByEqual(nameValue: String): Array[String] = nameValue.split('=')
+
+def headers = for (nameValue <- params("-h")) yield {
+  def tokens = splitByEqual(nameValue)
+  val header = new BasicHeader(tokens(0), tokens(1))
+  println("created header: " + header)
+  header
+}
+
+def formEntity = {
+  def toJavaList(scalaList: List[BasicNameValuePair]) = {
+    java.util.Arrays.asList(scalaList.toArray: _*) // '-*' send the result of toArray as a vararg
+  }
+
+  def formParams = for (nameValue <- params("-d")) yield {
+    def tokens = splitByEqual(nameValue)
+    new BasicNameValuePair(tokens(0), tokens(1))
+  }
+
+  def formEntity = new UrlEncodedFormEntity(toJavaList(formParams), "UTF-8")
+  formEntity
+}
+
+def handlePostRequest() = {
+  val httppost = new HttpPost(url)
+  headers.foreach {
+    httppost.addHeader(_)
+  }
+  httppost.setEntity(formEntity)
+  val responseBody = new DefaultHttpClient().execute(httppost, new BasicResponseHandler())
+  println(responseBody)
+}
+
+def handleGetRequest() = {
+  val query = params("-d").mkString("&")
+  val httpget = new HttpGet(s"$url?$query")
+  headers.foreach {
+    httpget.addHeader(_)
+  }
+
+  val responseBody = new DefaultHttpClient().execute(httpget, new BasicResponseHandler())
+  println(responseBody)
+}
+
+def handleDeleteRequest() = {
+  val httpDelete = new HttpDelete(url)
+  val httpResponse = new DefaultHttpClient().execute(httpDelete)
+  println(httpResponse.getStatusLine)
+}
+
+def handleOptionsRequest() = {
+  val httpOptions = new HttpOptions(url)
+  headers.foreach {
+    httpOptions.addHeader(_)
+  }
+  val httpResponse = new DefaultHttpClient().execute(httpOptions)
+  println(httpOptions.getAllowedMethods(httpResponse))
+}
