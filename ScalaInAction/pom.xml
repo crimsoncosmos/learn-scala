@@ -7,8 +7,10 @@
     <inceptionYear>2015</inceptionYear>
     <properties>
         <scala.version>2.11.6</scala.version>
-        <scala-maven-plugin-version>3.2.0</scala-maven-plugin-version>
-        <jetty-plugin-version>6.1.26</jetty-plugin-version>
+        <scala-test.version>2.2.4</scala-test.version>
+        <scala-maven-plugin.version>3.2.0</scala-maven-plugin.version>
+        <jetty-plugin.version>6.1.26</jetty-plugin.version>
+        <mongo-java-driver.version>2.13.0</mongo-java-driver.version>
     </properties>
 
     <repositories>
@@ -47,7 +49,7 @@
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.10</artifactId>
-            <version>2.2.4</version>
+            <version>${scala-test.version}</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -58,6 +60,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${mongo-java-driver.version}</version>
         </dependency>
     </dependencies>
 
@@ -87,12 +94,12 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>${scala-maven-plugin-version}</version>
+                <version>${scala-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
-                <version>${jetty-plugin-version}</version>
+                <version>${jetty-plugin.version}</version>
             </plugin>
             <!--<plugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -118,7 +125,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>${scala-maven-plugin-version}</version>
+                <version>${scala-maven-plugin.version}</version>
             </plugin>
             <!--<plugin>
               <groupId>org.scala-tools</groupId>
