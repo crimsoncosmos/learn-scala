@@ -1,3 +1,5 @@
+package scala.lang.java
+
 /**
   *
   *
@@ -11,12 +13,4 @@ class Reference[T] {
   }
 
   def get: T = contents
-}
-
-object IntegerReference {
-  def main(args: Array[String]): Unit = {
-    val cell = new Reference[Int]
-    cell.set(13)
-    println("Reference contains half of " + (cell.get * 2))
-  }
 }

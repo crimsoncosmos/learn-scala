@@ -1,5 +1,7 @@
-import java.util.{Date, Locale}
+package scala.lang.java
+
 import java.text.DateFormat._
+import java.util.{Date, Locale}
 /**
   *
   *
